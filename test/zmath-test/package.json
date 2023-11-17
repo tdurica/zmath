@@ -1,0 +1,16 @@
+{
+  "name": "zmath-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:cjs": "node test-cjs.js",
+    "test:mjs": "node test-mjs.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tdurica/zmath": "^1.0.0"
+  }
+}

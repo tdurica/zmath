@@ -1,0 +1,47 @@
+{
+  "name": "@tdurica/zmath",
+  "version": "1.0.0",
+  "description": "Wrapper for exact-math purposed for use with Solidity!",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "main": "dist/cjs/zmath.js",
+  "module": "dist/mjs/zmath.js",
+  "types": "dist/mjs/zmath.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/mjs/zmath.js",
+      "require": "./dist/cjs/zmath.js",
+      "types": "./dist/mjs/zmath.d.mts"
+    }
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "exact-math": "^2.2.3",
+    "child_process": "^1.0.2",
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.9.0",
+    "eslint": "^8.53.0",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "files": [
+    "dist/"
+  ],
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "keywords": ["string math", "math", "solidity"],
+  "author": "Todd Durica",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tdurica/zmath.git"
+  }
+}
