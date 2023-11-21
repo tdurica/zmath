@@ -40,21 +40,23 @@ Zmath supports both CommonJS require() and ESM imports
 
 ```javascript
 import {
-  sAdd,sSub,sMul,sDiv,sAddRay,_Add,_Sub,_Mul,_Div,_AddRay,_Chk,
-  sRnd,sAbs,_Flr,sFlr,sPow,sFla,sExp,sHR,hrExp,sNewtonSqRt,sChg,sScaleToPcts,nScaleToPcts,
+  sAdd,sSub,sMul,sDiv,sAddRay,_Add,_Sub,_Mul,_Div,_AddRay,_Chk,sSanitize,
+  sRnd,sAbs,_Flr,sFlr,sPow,sFla,sExp,sHR,hrExp,sNewtonSqRt,sChg,sScaleToPcts,
   sIs,sIs0,sIsGT,sIsLT,sIsGTorEq,sIsLTorEq,sIsEq,sIsNotEq,
   k0,num,sEthToWei,first4,last4,surr4s,inTenMinutes,weiToUSD,usdToWei,
-  abbrvNum,balToHrTuple,getAmountOut,adjustBrightness,sUint256max,sPpow2_128,sJsMaxSafeInt,
+  sGetLR,abbrvNum,balToHrTuple,getAmountOut,adjustBrightness,
+  sUint256max,sPpow2_128,sJsMaxSafeInt,
 } from '@tdurica/zmath';
 
 /* - OR - */
 
 const {
-  sAdd,sSub,sMul,sDiv,sAddRay,_Add,_Sub,_Mul,_Div,_AddRay,_Chk,
-  sRnd,sAbs,_Flr,sFlr,sPow,sFla,sExp,sHR,hrExp,sNewtonSqRt,sChg,sScaleToPcts,nScaleToPcts,
+  sAdd,sSub,sMul,sDiv,sAddRay,_Add,_Sub,_Mul,_Div,_AddRay,_Chk,sSanitize,
+  sRnd,sAbs,_Flr,sFlr,sPow,sFla,sExp,sHR,hrExp,sNewtonSqRt,sChg,sScaleToPcts,
   sIs,sIs0,sIsGT,sIsLT,sIsGTorEq,sIsLTorEq,sIsEq,sIsNotEq,
   k0,num,sEthToWei,first4,last4,surr4s,inTenMinutes,weiToUSD,usdToWei,
-  abbrvNum,balToHrTuple,getAmountOut,adjustBrightness,sUint256max,sPpow2_128,sJsMaxSafeInt,
+  sGetLR,abbrvNum,balToHrTuple,getAmountOut,adjustBrightness,
+  sUint256max,sPpow2_128,sJsMaxSafeInt,
 } = require('@tdurica/zmath');
 ```
 
