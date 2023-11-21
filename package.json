@@ -1,6 +1,6 @@
 {
   "name": "@tdurica/zmath",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Wrapper for exact-math purposed for use with Solidity!",
   "type": "module",
   "scripts": {

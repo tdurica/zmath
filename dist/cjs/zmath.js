@@ -3,9 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAmountOut = exports.balToHrTuple = exports.abbrvNum = exports.sIsNotEq = exports.sIsEq = exports.sIsLTorEq = exports.sIsGTorEq = exports.sIsLT = exports.sIsGT = exports._F = exports.sIs0 = exports.sIs = exports.lightenDarkenColor = exports._Chk = exports.sChg = exports.sNewtonSqRt = exports.hrExp = exports.sHR = exports.sExp = exports.sFla = exports.sPow = exports.sAbs = exports.sRnd = exports.sScaleToPcts = exports._AddRay = exports._Div = exports._Mul = exports._Sub = exports._Add = exports.sAddRay = exports.sDiv = exports.sMul = exports.sSub = exports.sAdd = exports.usdToWei = exports.weiToUSD = exports.inTenMinutes = exports.surr4s = exports.last4 = exports.first4 = exports.sEthToWei = exports.num = exports.k0 = exports.sJsMaxSafeInt = exports.sPpow2_128 = exports.sUint256max = void 0;
+exports.sJsMaxSafeInt = exports.sPpow2_128 = exports.sUint256max = exports.adjustBrightness = exports.getAmountOut = exports.balToHrTuple = exports.abbrvNum = exports.sGetLR = exports.usdToWei = exports.weiToUSD = exports.inTenMinutes = exports.surr4s = exports.last4 = exports.first4 = exports.sEthToWei = exports.num = exports.k0 = exports.sIsNotEq = exports.sIsEq = exports.sIsLTorEq = exports.sIsGTorEq = exports.sIsLT = exports.sIsGT = exports.sIs0 = exports.sIs = exports.sScaleToPcts = exports.sChg = exports.sNewtonSqRt = exports.hrExp = exports.sHR = exports.sExp = exports.sFla = exports.sPow = exports.sFlr = exports._Flr = exports.sAbs = exports.sRnd = exports.sSanitize = exports._Chk = exports._AddRay = exports._Div = exports._Mul = exports._Sub = exports._Add = exports.sAddRay = exports.sDiv = exports.sMul = exports.sSub = exports.sAdd = void 0;
 // import { ethers } from 'ethers';
 const exact_math_js_1 = __importDefault(require("./exact-math-dist/exact-math.js"));
+const zcolor_js_1 = require("./zcolor.js");
+Object.defineProperty(exports, "adjustBrightness", { enumerable: true, get: function () { return zcolor_js_1.adjustBrightness; } });
 const sUint256max = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
 exports.sUint256max = sUint256max;
 const diff = '31319569545912321281247414944698969706902316100102552102633584007913129639836';
@@ -39,6 +41,8 @@ const _eMsanitize = (v, label) => {
     }
     return v;
 };
+const sSanitize = _eMsanitize;
+exports.sSanitize = sSanitize;
 const eMcfg = (mDec = 18) => ({ returnString: true, eMinus: Infinity, ePlus: Infinity, maxDecimal: mDec });
 const _eMdo = (m, s1, s2, mDec = 18, solmode) => {
     s1 = _eMsanitize(s1, `s${m.charAt(0).toUpperCase() + m.slice(1)} arg1`);
@@ -82,33 +86,18 @@ const solHandler = (s1, s2 = '', m = '', sol = '', rv = '') => {
         rv = exact_math_js_1.default[m](s1, s2, eMcfg());
     return rv;
 };
-const _Chk = solHandler;
+const _Chk = (s1) => solHandler(s1);
 exports._Chk = _Chk;
-const hrWeiToEth = (s1) => {
-    s1 = _eMsanitize(s1, `hrWeiToEth`);
-    solHandler(s1);
-    sExp(s1, -18);
+const __AddRay = (solmode, array) => {
+    let rv = '0';
+    if (array.length < 2) {
+        array = array[0];
+    }
+    for (let s of array) {
+        rv = solmode ? _Add(rv, s) : sAdd(rv, s);
+    }
+    return rv;
 };
-const weiToUSD = (inputWei, ethPrice) => {
-    let weiPrice = sExp(ethPrice, -18);
-    return sRnd(sMul(sAbs(inputWei), weiPrice), -9);
-};
-exports.weiToUSD = weiToUSD;
-const usdToWei = (inputUSD, ethPrice) => {
-    let weiPrice = sExp(ethPrice, -18);
-    let usdAsWei = _F(sDiv(inputUSD, weiPrice), 0);
-    return usdAsWei;
-};
-exports.usdToWei = usdToWei;
-function getAmountOut(amountIn, reserveIn, reserveOut) {
-    //((x^fee * Y) / (X + x^fee)
-    let amountInWithFee = _Mul(amountIn, 997);
-    let numerator = _Mul(amountInWithFee, reserveOut);
-    let denominator = _Add(_Mul(reserveIn, 1000), amountInWithFee);
-    let amountOut = _Div(numerator, denominator);
-    return amountOut;
-}
-exports.getAmountOut = getAmountOut;
 const sAdd = (s1, s2, maxDec) => _eMdo('add', s1, s2, maxDec, 0);
 exports.sAdd = sAdd;
 const sSub = (s1, s2, maxDec) => _eMdo('sub', s1, s2, maxDec, 0);
@@ -125,9 +114,14 @@ const _Mul = (s1, s2) => _eMdo('mul', s1, s2, 0, 1);
 exports._Mul = _Mul;
 const _Div = (s1, s2) => _eMdo('div', s1, s2, 0, 1);
 exports._Div = _Div;
-const _F = (s1) => { s1 = _eMsanitize(s1, `_F`); return exact_math_js_1.default.floor(s1, eMcfg()); };
-exports._F = _F;
-const sF = (s1, dec = 1) => { s1 = _eMsanitize(s1, `_F`); return exact_math_js_1.default.floor(s1, Number(dec), eMcfg()); };
+const sAddRay = (...rest) => { return __AddRay(0, rest); };
+exports.sAddRay = sAddRay;
+const _AddRay = (...rest) => { return __AddRay(1, rest); };
+exports._AddRay = _AddRay;
+const sFlr = (s1, dec = 1) => { s1 = _eMsanitize(s1, `_F`); return exact_math_js_1.default.floor(s1, Number(dec), eMcfg()); };
+exports.sFlr = sFlr;
+const _Flr = (s1) => { s1 = _eMsanitize(s1, `_F`); return exact_math_js_1.default.floor(s1, eMcfg()); };
+exports._Flr = _Flr;
 const sRnd = (s1, dec = 1, cfg) => {
     s1 = _eMsanitize(s1, `sRnd`);
     return exact_math_js_1.default.round(s1.toString(), Number(dec), eMcfg());
@@ -135,20 +129,7 @@ const sRnd = (s1, dec = 1, cfg) => {
 exports.sRnd = sRnd;
 const sAbs = (s1) => { s1 = _eMsanitize(s1, `sAbs`); return s1.replace(/-/, ''); };
 exports.sAbs = sAbs;
-const __AddRay = (solmode, array) => {
-    let rv = '0';
-    if (array.length < 2) {
-        array = array[0];
-    }
-    for (let s of array) {
-        rv = solmode ? _Add(rv, s) : sAdd(rv, s);
-    }
-    return rv;
-};
-const sAddRay = (...rest) => { return __AddRay(0, rest); };
-exports.sAddRay = sAddRay;
-const _AddRay = (...rest) => { return __AddRay(1, rest); };
-exports._AddRay = _AddRay;
+//__ prefix denotes internal use only
 const sPow = (s1, pow) => exact_math_js_1.default.pow(s1.toString(), Number(pow), eMcfg());
 exports.sPow = sPow;
 const sFla = (formula) => exact_math_js_1.default.formula(formula, eMcfg());
@@ -161,15 +142,15 @@ const sExp = (s1, dec, esign = '+') => {
     return sFla(`${s1}e${esign}${sAbs(dec)}`);
 };
 exports.sExp = sExp;
-// let exp1 = sExp('0001111222233334444180000',-18)  //expect 1111.22
-// debugger;
-const _eMgetLR = (s1, label, rv = []) => {
+// sGetLR - returns array of values left and right of decimal
+const sGetLR = (s1, label, rv = []) => {
     s1 = _eMsanitize(s1, label);
     let idx = s1.indexOf('.');
     return idx < 0 ? [s1, '0'] : [s1.slice(0, idx), s1.slice(idx + 1, s1.length)];
 };
+exports.sGetLR = sGetLR;
 const sHR = (val) => {
-    let [L, R] = _eMgetLR(val, `sHR`);
+    let [L, R] = sGetLR(val, `sHR`);
     let left = L.replace(/\B(?=(\d{3})+(?!\d))/g, '_');
     let right = R.replace(/([0-9]*[1-9]|[0]?)[0]*/, '$1');
     return left + '.' + right;
@@ -179,13 +160,6 @@ const hrExp = (val, exp) => {
     return sHR(sExp(val, exp));
 };
 exports.hrExp = hrExp;
-// let hrc3 = sHR('1157920935.00011579200039935000000')
-// let hrc4 = sHR(sExp('1157920935.00011579200039935000000',-18))
-// let hrc5 = sHR('00777111222111222111000.00099911188811188877700')
-// let hrc6 = sHR(sExp('-00777111222111222111000.00099911188811188877700',18))
-// let f3 = sHR('1157920935.000011579203993500000000000')
-// let f5 = sHR('650003000.0003000')
-// debugger;
 function k0(obj) { return Object.keys(obj)[0]; }
 exports.k0 = k0;
 function num(string) { return parseInt(string); }
@@ -229,7 +203,7 @@ const sIs = (a, op, b) => {
     if (aIsNeg && !bIsNeg) {
         return false;
     }
-    let bothNeg = aIsNeg && bIsNeg, [aL, aR] = _eMgetLR(a, `sIs arg1`), [bL, bR] = _eMgetLR(b, `sIs arg1`);
+    let bothNeg = aIsNeg && bIsNeg, [aL, aR] = sGetLR(a, `sIs arg1`), [bL, bR] = sGetLR(b, `sIs arg1`);
     if (aL.length !== bL.length) {
         return !bothNeg ? aL.length > bL.length : bL.length > aL.length;
     }
@@ -284,43 +258,6 @@ const sIsEq = (a, b) => sIs(a, '==', b);
 exports.sIsEq = sIsEq;
 const sIsNotEq = (a, b) => sIs(a, '!=', b);
 exports.sIsNotEq = sIsNotEq;
-/*
-const sSqrt=(input,dec)=>{
-  let precision = .00000000000001;
-  let prevGuess = 0;
-  let guess = 5;
-  while(sExp(guess,2)!=='36'){
-    guess = newtonsMethod(guess)
-  }
-return guess;
-  function f(x) {return Math.sin(x);}
-  function derivative(f) {
-    let h = 36;
-    return function(x) { return (f(x + h) - f(x - h)) / (2 * h); };
-  }
-
-  function newtonsMethod(guess) {
-    if (guess === null || guess === undefined)
-      guess = 0;
-
-    if (Math.abs(prevGuess - guess) > precision) {
-      prevGuess = guess;
-      let approx = guess - (f(guess) / derivative(f)(guess));
-
-      console.log(guess);
-      console.log(f(guess));
-      console.log(derivative(f)(guess));
-      console.log(approx);
-      console.log('\n');
-
-      return newtonsMethod(approx);
-    } else {
-      return guess;
-    }
-  }
-
-}
-*/
 function sNewtonSqRt(n, precision = '40') {
     n = _eMsanitize(n, 'sNewtonSqRt');
     // let dec2=sAdd(dec, n.length)
@@ -360,105 +297,6 @@ function sNewtonSqRt(n, precision = '40') {
     return rv;
 }
 exports.sNewtonSqRt = sNewtonSqRt;
-/*
-let findSqrtOf = '6788688645866844'
-let findSqrtdec2 =  '82393498.80826061873665927'
-let findSqrtdec6 =  '82393498.808261'
-let findSqrtdec8 =  '82393498.80826062'
-
-let ss = sNewtonSqRt(findSqrtOf)
-console.log(ss);
-console.log(`orig: ${findSqrtOf}`);
-console.log(`mul:  ${sMul(ss,ss)}`);
-console.log(`exp:  ${sPow(ss,2)}`);
-*/
-/*
-const sSqrt=(s1,dec)=>{
-  let oddScalerMax = '31622776601683794'
-  let [L,R]=_eMgetLR(s1,`sSqrt`)
-  let length = L.length;
-  let isEven = length % 2 === 0;
-  //for odd lengths, Math.ceiling(length/2) scaled between 100xx and 31622776601683794
-  // 999 becomes 3/2 (1.5) cieling -> 2 and we take substr(0,2) of 999 to get 99
-  // 99 then scales between 10 and 31 to give us a best guess
-  if(!isEven){
-
-  }
-  let LhalfOfLSubStr = L.substr(0,
-    sMul(L.length,2))
-  let t1 = sDiv(L.length,2),tH,tL;
-  let goodEnough = false;
-  while(!goodEnough){
-
-  }
-  if(HLE(t1)==='H'){
-    tH = t1;
-  }
-
-
-  function HLE(test, base){
-    let sq = sMul(test,test);
-    return sIs(sq,'>',base)?'H':sIs(sq,'<',base)?'L'
-      :sIs(sq,'==',base)?'E':null;
-  }
-
-}
-*/
-//expect: 60.03434850150371
-// sSqrt('3604.123',18)
-// let s111 = _AddRay('1','1','1');
-// let s222 = _AddRay(['1','1','1']);
-// debugger;
-// let hrc3 = sIs0('00.34')
-// let hrc34 = sIs0('340')
-// let hrc35 = sIs0('034')
-// let hrc36 = sIs0('034.0')
-// let hrc37 = sIs0('-0.0')
-// let hrc38 = sIs0('-0.10')
-// let hrc39 = sIs0('-.0')
-// let hrc30 = sIs0('-0.')
-// let hrc322 = sIs0('-0')
-// let hrc4 = sIs0('3.4')
-// let hrc5 = sIs0('3.')
-// let hrc6 = sIs0('0.')
-// let hrc31 = sIs0('0')
-// let hrc41 = sIs0('.0')
-// let hrc51 = sIs0('0.0')
-// let hrc61 = sIs0('0000.0000')
-// debugger;
-// let hr2 = sPowE('43',5)
-// let f2 = sFla('43e+5')
-//
-// let hr2b = sPowE('-43',5)
-// let f2b = sFla('-43e+5')
-// let hrc3 = sExp('43',-5)
-// let f3 = sFla('43e-5')
-// let h52 = sIs('6','<','5601678.685')
-// let h52 = sIs('.00001','>=','0')
-// let h53 = sIs('.01','>=','0')
-// let h54 = sIs('0.00000','>=','0')
-// let h55 = sIs('-0.0100','>=','0')
-// debugger;
-// let hr3c =sIs('-115792089237316195423570985008687907853269984665640564039457584007913129639935','>','115792089237316195423570985008687907853269984665640564039457584007913129639935');
-// let hgc = sIs('-115792089237316195423570985008687907853269984665640564039457584007913129639935','<','115792089237316195423570985008687907853269984665640564039457584007913129639935');
-// let h2 =  sIs( '1157920935.115792039935','<=', '1157920935.115792039935')
-// let h22 = sIs( '1157920935.115792039935','==', '1157920935.115792039935')
-// let h32 = sIs('-1157920935.115792039935','>=','-1157920935.115792039935')
-// let h42 = sIs( '1157920935.115792039935','<', '-1157920935.115792039935')
-// let h52 = sIs('-0935','>',sMul('9',-(10**18)))
-// let herc = sIs('0003000.0003000','<','0003000.0003001')
-// let erc = sIs('0003000.0003000','<=','0003000.0003000')
-// let hc = sIs('-0003000.0003000','<','0003000.0003000')
-// let h = sIs('-0003000.0003000','>','0003000.0003000')
-// let h4c = sIs('0003000.0003','>=','00003000.000300')
-// let h5gr = sIs('10003000.0003000','>','0003000.0003001')
-// let h3gr = sIs('0003000.0003000','!=','0003000.000300000000')
-// let h7gr = sIs('00003000.0003000','==','0003000.00030000')
-// let hr4 = sPowE('004000.000300',5)
-// let f4 = sFla('004000.000300e+5')
-// let hr5 = sPowE('0040.0300',-5)
-// let f5 = sFla('0040.0300e-5')
-//
 const sChg = function (v1, v2) {
     return sSub(v2, v1);
 };
@@ -493,14 +331,6 @@ function scaleUtil(argArray, rangeMin, rangeMax) {
 function _sScaleToPcts(...args) {
     scaleUtil([args], 0, 100);
 }
-function nScaleToPcts(...args) {
-    //Find the total sum of all the values in the array
-    let arraySum = args.reduce((a, b) => a + b);
-    // Divide each value by the total sum
-    let mapDivBySum = args.map(v => v / arraySum);
-    // Multiply each value by 100
-    return mapDivBySum.map(v => v * 100);
-}
 function sScaleToPcts(...args) {
     //Find the total sum of all the values in the array
     let arraySum = args.reduce((a, b) => sAdd(a, b));
@@ -510,8 +340,7 @@ function sScaleToPcts(...args) {
     return mapDivBySum.map(v => sMul(v, 100));
 }
 exports.sScaleToPcts = sScaleToPcts;
-let r1 = nScaleToPcts(300, 900, 200);
-let r2 = sScaleToPcts('300', 900, 200);
+// let r2 = sScaleToPcts('300',900,200)
 const abbrvNum = (num, fixed) => {
     if (num === null) {
         return '';
@@ -525,31 +354,31 @@ const abbrvNum = (num, fixed) => {
     return d + ['', 'K', 'M', 'B', 'T'][k];
 };
 exports.abbrvNum = abbrvNum;
-function lightenDarkenColor(col, amt) {
-    let usePound = false;
-    if (col[0] == "#") {
-        col = col.slice(1);
-        usePound = true;
-    }
-    let num = parseInt(col, 16);
-    let r = (num >> 16) + amt;
-    if (r > 255)
-        r = 255;
-    else if (r < 0)
-        r = 0;
-    let b = ((num >> 8) & 0x00FF) + amt;
-    if (b > 255)
-        b = 255;
-    else if (b < 0)
-        b = 0;
-    let g = (num & 0x0000FF) + amt;
-    if (g > 255)
-        g = 255;
-    else if (g < 0)
-        g = 0;
-    return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
+const hrWeiToEth = (s1) => {
+    s1 = _eMsanitize(s1, `hrWeiToEth`);
+    solHandler(s1);
+    sExp(s1, -18);
+};
+const weiToUSD = (inputWei, ethPrice) => {
+    let weiPrice = sExp(ethPrice, -18);
+    return sRnd(sMul(sAbs(inputWei), weiPrice), -9);
+};
+exports.weiToUSD = weiToUSD;
+const usdToWei = (inputUSD, ethPrice) => {
+    let weiPrice = sExp(ethPrice, -18);
+    let usdAsWei = _Flr(sDiv(inputUSD, weiPrice), 0);
+    return usdAsWei;
+};
+exports.usdToWei = usdToWei;
+function getAmountOut(amountIn, reserveIn, reserveOut) {
+    //((x^fee * Y) / (X + x^fee)
+    let amountInWithFee = _Mul(amountIn, 997);
+    let numerator = _Mul(amountInWithFee, reserveOut);
+    let denominator = _Add(_Mul(reserveIn, 1000), amountInWithFee);
+    let amountOut = _Div(numerator, denominator);
+    return amountOut;
 }
-exports.lightenDarkenColor = lightenDarkenColor;
+exports.getAmountOut = getAmountOut;
 function balToHrTuple(rawBal, decimal, usdPrice) {
     //@returns [rawBal, decimalAdjustedBal, usdEquivalent]
     const decimalAdjustedBal = sRnd(sExp(rawBal, -decimal), -4);
@@ -557,3 +386,5 @@ function balToHrTuple(rawBal, decimal, usdPrice) {
     return [rawBal, decimalAdjustedBal, usdEquivalent];
 }
 exports.balToHrTuple = balToHrTuple;
+// zcolor exports
+// export {adjustBrightness}
